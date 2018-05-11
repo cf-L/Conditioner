@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-
+    <conditioner :options="options"></conditioner>
   </div>
 </template>
 
@@ -9,7 +9,12 @@
 
   export default {
     name: 'app',
-    components: {}
+    components: {},
+    data() {
+      return {
+        options: { 'd': 'tt' }
+      }
+    }
   }
 </script>
 
