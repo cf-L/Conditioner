@@ -1,0 +1,45 @@
+{
+  "name": "conditioner",
+  "version": "1.0.0",
+  "description": "A condition selecter",
+  "keywords": [
+    "vue.js",
+    "vue-plugin",
+    "condition"
+  ],
+  "main": "lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "bugs": {
+    "url": "https://github.com/cf-L/Conditioner/issues",
+    "email": "linchangfeng@live.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cf-L/Conditioner.git"
+  },
+  "scripts": {
+    "test": "npm run lint",
+    "lint": "eslint --ext .js,.vue src",
+    "build": "vue-cli-service build",
+    "serve": "vue-cli-service serve --open"
+  },
+  "author": "cf-L",
+  "license": "MIT",
+  "dependencies": {
+    "babel-eslint": "^8.2.3",
+    "element-ui": "^2.3.7",
+    "eslint": "^4.19.1",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-html": "^4.0.3",
+    "vue": "^2.5.16"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.0.0-beta.10",
+    "@vue/cli-plugin-eslint": "^3.0.0-beta.10",
+    "@vue/cli-service": "^3.0.0-beta.10",
+    "vue-template-compiler": "^2.5.13"
+  }
+}
