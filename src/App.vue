@@ -12,7 +12,30 @@
     components: {},
     data() {
       return {
-        options: { 'd': 'tt' }
+        options: {
+          names: ['标题', '副标题', '排名'],
+          alias: ['title', 'subtitle', 'rank'],
+          model: [
+            {
+              alias: 'title',
+              type: 'String',
+              sopt: ['cn', 'nc'],
+              required: true
+            },
+            {
+              alias: 'subtitle',
+              type: 'String',
+              sopt: ['cn', 'nc', 'ge'],
+              required: false
+            },
+            {
+              alias: 'rank',
+              type: 'Int',
+              sopt: ['cn', 'nc', 'ge'],
+              required: true
+            }
+          ]
+        }
       }
     }
   }
