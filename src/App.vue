@@ -13,20 +13,26 @@
     data() {
       return {
         options: {
-          names: ['标题', '副标题', '排名'],
-          alias: ['title', 'subtitle', 'rank'],
+          names: ['副标题', '时间', '标题', '排名'],
+          alias: ['subtitle', 'date', 'title', 'rank'],
           model: [
-            {
-              alias: 'title',
-              type: 'String',
-              sopt: ['cn', 'nc'],
-              required: true
-            },
             {
               alias: 'subtitle',
               type: 'String',
               sopt: ['cn', 'nc', 'ge'],
               required: false
+            },
+            {
+              alias: 'date',
+              type: 'Date',
+              sopt: ['eq', 'ne', 'bt'],
+              required: false
+            },
+            {
+              alias: 'title',
+              type: 'String',
+              sopt: ['cn', 'nc'],
+              required: true
             },
             {
               alias: 'rank',
