@@ -3,7 +3,7 @@
     <el-button type="text" @click="dialogVisible = true">筛选</el-button>
 
     <el-dialog
-      title="筛选"
+      title="Search"
       :visible.sync="dialogVisible"
       width="50%">
 
@@ -50,8 +50,22 @@
             </el-select>
           </el-col>
 
-          <el-col :span="15" v-if="option.type !== 'Date'">
-            <el-input clearable placeholder="请输入内容" v-model="option.value"></el-input>
+          <el-col :span="15" v-if="option.type !== 'Date' && !option.remote">
+            <el-input
+              clearable
+              placeholder="Please input"
+              v-model="option.value">
+            </el-input>
+          </el-col>
+
+          <el-col :span="15" v-if="option.type !== 'Date' && option.remote">
+            <el-autocomplete
+              clearable placeholder="Please input"
+              v-model="option.value"
+              :id="'autoComplete-' + index"
+              @focus="autoCompletedFocus"
+              :fetch-suggestions="querySearchAsync">
+            </el-autocomplete>
           </el-col>
 
           <el-col :span="8" v-if="option.type === 'Date' && option.sopt !== 'bt'">
@@ -85,9 +99,8 @@
 
 
       <span slot="footer" class="dialog-footer">
-        <el-button type="text" style="color: #DD928E;" @click="addAction">添加</el-button>
-        <el-button type="text" @click="dialogVisible = false">取 消</el-button>
-        <el-button type="text" @click="okAction">确 定</el-button>
+        <el-button type="text" icon="el-icon-plus" style="color: #67c23a;" @click="addAction"></el-button>
+        <el-button type="text" icon="el-icon-search" @click="okAction"></el-button>
       </span>
 
     </el-dialog>
@@ -95,8 +108,19 @@
 
 </template>
 
+<style>
+  .el-autocomplete-suggestion {
+    width: auto!important;
+  }
+
+  .el-autocomplete {
+    width: 100%;
+  }
+</style>
+
 <script>
   import relationship from '../sopt'
+  import axios from 'axios'
 
   export default {
     name: 'conditioner',
@@ -111,6 +135,7 @@
         dialogVisible: false,
         displayEl: [],
         nameSelIndex: -1,
+        autoCompleteIndex: -1,
         datePicker: '',
         datePickerOption: {
           disabledDate(time) {
@@ -139,7 +164,7 @@
         }
       }
     },
-    created() {
+    mounted() {
       this.displayEl = this.requiredEl()
     },
     methods: {
@@ -151,14 +176,43 @@
         this.dialogVisible = false
         console.log(this.finalEl())
       },
+
       addAction() {
         this.displayEl.push(this.defaultEl())
       },
+
+      querySearchAsync(text, cb) {
+        const _this = this
+        if (this.autoCompleteIndex > -1) {
+          const model = this.displayEl[this.autoCompleteIndex]
+
+          if (!model || !model.remote) { cb([]) }
+
+          this.axiosMethod(model.remote.method)(model.remote.url, { 'query': text })
+            .then(function(response) {
+              cb(response.data)
+              // cb(response.data.map(x => {
+              //   return { value: x.name }
+              // }))
+            })
+            .catch(function(error) {
+              _this.$message.error(error)
+            })
+        }
+      },
+
+      autoCompletedFocus(event) {
+        if (event.path[2].id) {
+          this.autoCompleteIndex = parseInt(event.path[2].id.split('-')[1])
+        }
+      },
+
       nameSelFocus(event) {
         if (event.target.id) {
           this.nameSelIndex = parseInt(event.target.id.split('-')[1])
         }
       },
+
       nameSelChange(alias) {
         if (this.nameSelIndex > -1) {
           const model = this.options.model.filter(x => x.alias === alias)[0]
@@ -169,10 +223,12 @@
           el.required = model.required
           el.soptObjs = soptObject
           el.sopt = soptObject[0] ? soptObject[0].sopt : ''
+          el.remote = model.remote
           // Trigger Vue update, 'this.displayEl[this.nameSelIndex] = el' is useless
           this.displayEl.splice(this.nameSelIndex, 1, el)
         }
       },
+
       removeAction(event) {
         const id = event.currentTarget.id
         const index = id.split('-')[1]
@@ -180,11 +236,13 @@
           this.displayEl.splice(index, 1)
         }
       },
+
       soptObject(sopts) {
         return sopts.map(x => {
           return { sopt: x, name: relationship[x] }
         })
       },
+
       defaultEl() {
         if (this.options.model && this.options.model.length > 0) {
 
@@ -204,11 +262,13 @@
             sopt: sopt,
             value: '',
             required: firstModel.required,
-            selEnable: false
+            selEnable: false,
+            remote: firstModel.remote
           }
         }
         return {}
       },
+
       requiredEl() {
         const _this = this
         const model = this.options.model.filter(x => x.required)
@@ -222,12 +282,14 @@
             sopt: sopt,
             value: '',
             required: x.required,
-            selEnable: true
+            selEnable: true,
+            remote: x.remote
           }
         })
 
         return els.length > 0 ? els : [this.defaultEl()]
       },
+
       finalEl() {
         return this.displayEl.map(x => {
           return {
@@ -238,6 +300,7 @@
           }
         }).filter(x => x.sopt !== '' && x.value !== '')
       },
+
       check() {
         let success = true
         const reqEl = this.displayEl.filter(x => x.required)
@@ -251,6 +314,28 @@
           }
         }
         return success
+      },
+
+      axiosMethod(text) {
+        const methodText = text.toLowerCase()
+        let method = axios.get
+        switch (methodText) {
+          case 'post':
+            method = axios.post
+            break
+          case 'put':
+            method = axios.put
+            break
+          case 'delete':
+            method = axios.delete
+            break
+          case 'patch':
+            method = axios.patch
+            break
+          default:
+            break
+        }
+        return method
       }
     }
   }

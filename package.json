@@ -28,6 +28,7 @@
   "author": "cf-L",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-eslint": "^8.2.3",
     "element-ui": "^2.3.7",
     "eslint": "^4.19.1",

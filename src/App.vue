@@ -13,8 +13,8 @@
     data() {
       return {
         options: {
-          names: ['副标题', '时间', '标题', '排名'],
-          alias: ['subtitle', 'date', 'title', 'rank'],
+          names: ['副标题', '时间', '标题', '排名', '国家'],
+          alias: ['subtitle', 'date', 'title', 'rank', 'country'],
           model: [
             {
               alias: 'subtitle',
@@ -39,6 +39,16 @@
               type: 'Int',
               sopt: ['cn', 'nc', 'ge'],
               required: true
+            },
+            {
+              alias: 'country',
+              type: 'String',
+              sopt: ['eq'],
+              required: true,
+              remote: {
+                url: 'http://team1.flowever.net:4025/countries',
+                method: 'GET'
+              }
             }
           ]
         }
