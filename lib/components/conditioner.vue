@@ -12,84 +12,95 @@
         <el-form-item size="mini" v-for="(option, index) in displayEl">
           <el-row :gutter="5">
 
-          <el-col :span="1" v-if="option.type === 'Date' || option.selEnable == false">
-            <el-button
-              type="text"
-              style="color: #f56c6c;"
-              :id="'conditionRemove-' + index"
-              @click="removeAction($event)">
-              一
-            </el-button>
-          </el-col>
+            <el-col :span="1" v-if="option.type === 'Date' || option.selEnable == false">
+              <el-button
+                type="text"
+                style="color: #f56c6c;"
+                :id="'conditionRemove-' + index"
+                @click="removeAction($event)">
+                一
+              </el-button>
+            </el-col>
 
-          <el-col :span="4" :offset="option.selEnable ? 1 : 0">
-            <el-select
-              :disabled="option.selEnable"
-              v-model="option.alias"
-              @focus="nameSelFocus"
-              @change="nameSelChange"
-              :id="'conditionName-' + index">
+            <el-col :span="4" :offset="option.selEnable ? 1 : 0">
+              <el-select
+                :disabled="option.selEnable"
+                v-model="option.alias"
+                @focus="nameSelFocus"
+                @change="nameSelChange"
+                :id="'conditionName-' + index">
 
-              <el-option
-                v-for="(n, j) in options.alias"
-                :key="n"
-                :label="options.names[j]"
-                :value="n">
-              </el-option>
-            </el-select>
-          </el-col>
+                <el-option
+                  v-for="(n, j) in options.alias"
+                  :key="n"
+                  :label="options.names[j]"
+                  :value="n">
+                </el-option>
+              </el-select>
+            </el-col>
 
-          <el-col :span="4">
-            <el-select v-model="option.sopt">
-              <el-option
-                v-for="(s, i) in option.soptObjs"
-                :key="s.sopt"
-                :value="s.sopt"
-                :label="s.name">
-              </el-option>
-            </el-select>
-          </el-col>
+            <el-col :span="4">
+              <el-select v-model="option.sopt">
+                <el-option
+                  v-for="(s, i) in option.soptObjs"
+                  :key="s.sopt"
+                  :value="s.sopt"
+                  :label="s.name">
+                </el-option>
+              </el-select>
+            </el-col>
 
-          <el-col :span="15" v-if="option.type !== 'Date' && !option.remote">
-            <el-input
-              clearable
-              placeholder="Please input"
-              v-model="option.value">
-            </el-input>
-          </el-col>
+            <el-col :span="15" v-if="option.type !== 'Date' && option.type !== 'Selector' && !option.remote">
+              <el-input
+                clearable
+                placeholder="Please input"
+                v-model="option.value">
+              </el-input>
+            </el-col>
 
-          <el-col :span="15" v-if="option.type !== 'Date' && option.remote">
-            <el-autocomplete
-              clearable placeholder="Please input"
+            <el-col :span="15" v-if="option.type !== 'Date' && option.type !== 'Selector' && option.remote">
+              <el-autocomplete
+                clearable placeholder="Please input"
+                v-model="option.value"
+                :id="'autoComplete-' + index"
+                @focus="autoCompletedFocus"
+                :fetch-suggestions="querySearchAsync">
+              </el-autocomplete>
+            </el-col>
+
+            <el-col :span="6" v-if="option.type === 'Selector'">
+              <el-select v-model="option.value" @focus="remoteSelectorFocus" :id="'selector-' + index">
+                <el-option
+                  v-for="(op, i) in option.selectOptions"
+                  :key="op.key"
+                  :value="op.value"
+                  :label="op.label">
+                </el-option>
+              </el-select>
+            </el-col>
+
+            <el-col :span="8" v-if="option.type === 'Date' && option.sopt !== 'bt'">
+              <el-date-picker
               v-model="option.value"
-              :id="'autoComplete-' + index"
-              @focus="autoCompletedFocus"
-              :fetch-suggestions="querySearchAsync">
-            </el-autocomplete>
-          </el-col>
-
-          <el-col :span="8" v-if="option.type === 'Date' && option.sopt !== 'bt'">
-            <el-date-picker
-            v-model="option.value"
-            align="right"
-            type="date"
-            placeholder="选择日期"
-            :picker-options="datePickerOption">
-            </el-date-picker>
-          </el-col>
-
-          <el-col :span="8" v-if="option.type === 'Date' && option.sopt === 'bt'">
-            <el-date-picker
-              v-model="option.value"
-              type="daterange"
               align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              type="date"
+              placeholder="选择日期"
               :picker-options="datePickerOption">
-            </el-date-picker>
-          </el-col>
+              </el-date-picker>
+            </el-col>
+
+            <el-col :span="8" v-if="option.type === 'Date' && option.sopt === 'bt'">
+              <el-date-picker
+                v-model="option.value"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="datePickerOption">
+              </el-date-picker>
+            </el-col>
           </el-row>
 
 
@@ -207,6 +218,35 @@
         }
       },
 
+      remoteSelectorFocus(event) {
+        console.log('ddd')
+        const _this = this
+        if (event.target.id) {
+          const index = parseInt(event.target.id.split('-')[1])
+          const model = this.displayEl[index]
+
+          if (!model || model.selectOptions.length > 0 || !model.remote) { return }
+
+          this.axiosMethod(model.remote.method)(model.remote.url)
+            .then(function(response) {
+              if (response.data) {
+                model.selectOptions = response.data
+                // model.selectOptions = response.data.map(x => {
+                //   return {
+                //     key: x.id,
+                //     value: x.code,
+                //     label: x.name
+                //   }
+                // })
+                _this.displayEl.splice(index, 1, model)
+              }
+            })
+            .catch(function(err) {
+              _this.$message.error(err)
+            })
+        }
+      },
+
       nameSelFocus(event) {
         if (event.target.id) {
           this.nameSelIndex = parseInt(event.target.id.split('-')[1])
@@ -224,6 +264,7 @@
           el.soptObjs = soptObject
           el.sopt = soptObject[0] ? soptObject[0].sopt : ''
           el.remote = model.remote
+          el.selectOptions = []
           // Trigger Vue update, 'this.displayEl[this.nameSelIndex] = el' is useless
           this.displayEl.splice(this.nameSelIndex, 1, el)
         }
@@ -263,7 +304,8 @@
             value: '',
             required: firstModel.required,
             selEnable: false,
-            remote: firstModel.remote
+            remote: firstModel.remote,
+            selectOptions: []
           }
         }
         return {}
@@ -283,7 +325,8 @@
             value: '',
             required: x.required,
             selEnable: true,
-            remote: x.remote
+            remote: x.remote,
+            selectOptions: []
           }
         })
 

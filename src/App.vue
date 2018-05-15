@@ -42,7 +42,7 @@
             },
             {
               alias: 'country',
-              type: 'String',
+              type: 'Selector',
               sopt: ['eq'],
               required: true,
               remote: {
