@@ -45,10 +45,14 @@
               type: 'Selector',
               sopt: ['eq'],
               required: true,
-              remote: {
-                url: 'http://team1.flowever.net:4025/countries',
-                method: 'GET'
-              }
+              selectOptions: [
+                { key: '1', value: 'us', label: '美国' },
+                { key: '2', value: 'cn', label: '中国' }
+              ]
+              // remote: {
+              //   url: 'http://team1.flowever.net:4025/countries',
+              //   method: 'GET'
+              // }
             }
           ]
         }

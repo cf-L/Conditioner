@@ -264,7 +264,7 @@
           el.soptObjs = soptObject
           el.sopt = soptObject[0] ? soptObject[0].sopt : ''
           el.remote = model.remote
-          el.selectOptions = []
+          el.selectOptions = model.selectOptions || []
           // Trigger Vue update, 'this.displayEl[this.nameSelIndex] = el' is useless
           this.displayEl.splice(this.nameSelIndex, 1, el)
         }
@@ -305,7 +305,7 @@
             required: firstModel.required,
             selEnable: false,
             remote: firstModel.remote,
-            selectOptions: []
+            selectOptions: firstModel.selectOptions || []
           }
         }
         return {}
@@ -326,7 +326,7 @@
             required: x.required,
             selEnable: true,
             remote: x.remote,
-            selectOptions: []
+            selectOptions: x.selectOptions || []
           }
         })
 
