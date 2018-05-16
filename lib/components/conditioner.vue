@@ -205,7 +205,7 @@
           const relatedObj = {}
           if (model.related) {
             for (const re of model.related) {
-              relatedObj[re] = this.displayEl.filter(x => x.alias === re).map(x => x.value)
+              relatedObj[re] = this.displayEl.filter(x => x.alias === re).map(x => x.value).filter(x => x !== '')
             }
           }
 
@@ -237,7 +237,7 @@
           const relatedObj = {}
           if (model.related) {
             for (const re of model.related) {
-              relatedObj[re] = this.displayEl.filter(x => x.alias === re).map(x => x.value)
+              relatedObj[re] = this.displayEl.filter(x => x.alias === re).map(x => x.value).filter(x => x !== '')
             }
           }
 
