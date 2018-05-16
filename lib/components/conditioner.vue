@@ -12,7 +12,7 @@
         <el-form-item size="mini" v-for="(option, index) in displayEl">
           <el-row :gutter="5">
 
-            <el-col :span="1" v-if="option.type === 'Date' || option.selEnable == false">
+            <el-col :span="1" v-if="option.selEnable == false">
               <el-button
                 type="text"
                 style="color: #f56c6c;"

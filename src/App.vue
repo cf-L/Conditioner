@@ -26,7 +26,7 @@
               alias: 'date',
               type: 'Date',
               sopt: ['eq', 'ne', 'bt'],
-              required: false
+              required: true
             },
             {
               alias: 'title',
