@@ -316,7 +316,7 @@
         const model = this.options.model.filter(x => x.required)
         const els = model.map(x => {
           const soptObjs = _this.soptObject(x.sopt)
-          const sopt = soptObjs[0] ? soptObjs[0] : ''
+          const sopt = soptObjs[0] ? soptObjs[0].sopt : ''
           return {
             alias: x.alias,
             type: x.type,
