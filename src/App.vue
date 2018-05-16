@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <conditioner :options="options"></conditioner>
+    <conditioner :options="options" @search="handleSearch"></conditioner>
   </div>
 </template>
 
@@ -56,6 +56,11 @@
             }
           ]
         }
+      }
+    },
+    methods: {
+      handleSearch(evt, finalEl) {
+        console.log('seaerch: ', finalEl)
       }
     }
   }

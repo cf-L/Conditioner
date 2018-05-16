@@ -179,13 +179,15 @@
       this.displayEl = this.requiredEl()
     },
     methods: {
-      okAction() {
+      okAction(evt) {
         if (!this.check()) {
           this.$message.error('需要填写完整条件，每行前面没带"一"为必填内容')
           return
         }
         this.dialogVisible = false
-        console.log(this.finalEl())
+        const finalEl = this.finalEl()
+        console.log(finalEl)
+        this.$emit('search', evt, finalEl)
       },
 
       addAction() {
