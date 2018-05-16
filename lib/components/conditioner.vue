@@ -81,11 +81,11 @@
 
             <el-col :span="8" v-if="option.type === 'Date' && option.sopt !== 'bt'">
               <el-date-picker
-              v-model="option.value"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-              :picker-options="datePickerOption">
+                v-model="option.value"
+                align="right"
+                type="date"
+                placeholder="选择日期"
+                :picker-options="datePickerOption">
               </el-date-picker>
             </el-col>
 
@@ -101,6 +101,7 @@
                 :picker-options="datePickerOption">
               </el-date-picker>
             </el-col>
+
           </el-row>
 
 
@@ -201,12 +202,18 @@
 
           if (!model || !model.remote) { cb([]) }
 
-          this.axiosMethod(model.remote.method)(model.remote.url, { 'query': text })
+          const relatedObj = {}
+          if (model.related) {
+            for (const re of model.related) {
+              relatedObj[re] = this.displayEl.filter(x => x.alias === re).map(x => x.value)
+            }
+          }
+
+          const queryObj = Object.assign({}, { 'query': text }, relatedObj)
+
+          this.axiosMethod(model.remote.method)(model.remote.url, queryObj)
             .then(function(response) {
               cb(response.data)
-              // cb(response.data.map(x => {
-              //   return { value: x.name }
-              // }))
             })
             .catch(function(error) {
               _this.$message.error(error)
@@ -227,19 +234,19 @@
           const index = parseInt(event.target.id.split('-')[1])
           const model = this.displayEl[index]
 
-          if (!model || model.selectOptions.length > 0 || !model.remote) { return }
+          const relatedObj = {}
+          if (model.related) {
+            for (const re of model.related) {
+              relatedObj[re] = this.displayEl.filter(x => x.alias === re).map(x => x.value)
+            }
+          }
 
-          this.axiosMethod(model.remote.method)(model.remote.url)
+          if (!model || !model.remote) { return }
+
+          this.axiosMethod(model.remote.method)(model.remote.url, relatedObj)
             .then(function(response) {
               if (response.data) {
                 model.selectOptions = response.data
-                // model.selectOptions = response.data.map(x => {
-                //   return {
-                //     key: x.id,
-                //     value: x.code,
-                //     label: x.name
-                //   }
-                // })
                 _this.displayEl.splice(index, 1, model)
               }
             })
@@ -267,6 +274,8 @@
           el.sopt = soptObject[0] ? soptObject[0].sopt : ''
           el.remote = model.remote
           el.selectOptions = model.selectOptions || []
+          el.value = ''
+          el.related = model.related
           // Trigger Vue update, 'this.displayEl[this.nameSelIndex] = el' is useless
           this.displayEl.splice(this.nameSelIndex, 1, el)
         }
@@ -307,7 +316,8 @@
             required: firstModel.required,
             selEnable: false,
             remote: firstModel.remote,
-            selectOptions: firstModel.selectOptions || []
+            selectOptions: firstModel.selectOptions || [],
+            related: firstModel.related
           }
         }
         return {}
@@ -328,7 +338,8 @@
             required: x.required,
             selEnable: true,
             remote: x.remote,
-            selectOptions: x.selectOptions || []
+            selectOptions: x.selectOptions || [],
+            related: x.related
           }
         })
 

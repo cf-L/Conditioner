@@ -42,17 +42,17 @@
             },
             {
               alias: 'country',
-              type: 'Selector',
+              type: 'String',
               sopt: ['eq'],
               required: true,
-              selectOptions: [
-                { key: '1', value: 'us', label: '美国' },
-                { key: '2', value: 'cn', label: '中国' }
-              ]
-              // remote: {
-              //   url: 'http://team1.flowever.net:4025/countries',
-              //   method: 'GET'
-              // }
+              // selectOptions: [
+              //   { key: '1', value: 'us', label: '美国' },
+              //   { key: '2', value: 'cn', label: '中国' }
+              // ]
+              remote: {
+                url: 'http://localhost:9528/selectorResearchCountries',
+                method: 'GET'
+              }
             }
           ]
         }
