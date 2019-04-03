@@ -4,12 +4,12 @@
       :type="buttonType || 'text'"
       :size="buttonSize || 'small'"
       :icon="icon"
-      @click="dialogVisible = true">{{text || '筛选'}}</el-button>
+      @click="dialogVisible = true">{{text}}</el-button>
 
     <el-dialog
       title="Search"
       :visible.sync="dialogVisible"
-      width="50%">
+      :width="width">
 
       <el-form>
 
@@ -143,6 +143,10 @@
     props: {
       options: {
         type: Object,
+        required: true
+      },
+      width: {
+        type: String,
         required: true
       },
       buttonType: {
