@@ -1,6 +1,10 @@
 <template>
   <div>
-    <el-button type="text" @click="dialogVisible = true">筛选</el-button>
+    <el-button
+      :type="buttonType || 'text'"
+      :size="buttonSize || 'small'"
+      :icon="icon"
+      @click="dialogVisible = true">{{text || '筛选'}}</el-button>
 
     <el-dialog
       title="Search"
@@ -140,6 +144,22 @@
       options: {
         type: Object,
         required: true
+      },
+      buttonType: {
+        type: String,
+        required: false
+      },
+      icon: {
+        type: String,
+        required: false
+      },
+      text: {
+        type: String,
+        required: false
+      },
+      buttonSize: {
+        type: String,
+        required: false
       }
     },
     data() {
